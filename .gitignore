@@ -30,6 +30,8 @@
 # Build directory on linux
 ############################
 build/
+bin/
+lib/
  
 # Logs and databases #
 ######################

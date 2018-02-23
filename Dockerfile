@@ -1,25 +1,30 @@
-FROM ubuntu:14.04
+FROM ubuntu:latest
 
 # Install.
 RUN \
-  sed -i 's/# \(.*multiverse$\)/\1/g' /etc/apt/sources.list && \
   apt-get update && \
   apt-get -y upgrade && \
-  apt-get install -y build-essential && \
-  apt-get install -y software-properties-common && \
-  apt-get install -y byobu curl git htop man unzip vim wget && \
-  rm -rf /var/lib/apt/lists/*
+  apt-get install -y build-essential git cmake
 
-# Add files.
-ADD root/.bashrc /root/.bashrc
-ADD root/.gitconfig /root/.gitconfig
-ADD root/.scripts /root/.scripts
+ADD . /opt/cpp-rest-service-example
+
+# checkout submodule and build
+RUN \
+  cd /opt/cpp-rest-service-example &&\
+  git submodule update --init --depth 1 && \
+  mkdir build &&\
+  cd build &&\
+  cmake .. &&\
+  make && \
+  cp /opt/cpp-rest-service-example/bin/restservice /usr/bin
+#COPY /opt/cpp-rest-service-example/bin/restservice /usr/bin
+
+CMD ["/usr/bin/restservice"]
 
 # Set environment variables.
-ENV HOME /root
+#ENV HOME /root
 
 # Define working directory.
-WORKDIR /root
+#WORKDIR /root
 
 # Define default command.
-CMD ["bash"]
